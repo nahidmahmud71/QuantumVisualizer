@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Visualizer | Engineered by Nahid Mahmud</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap');
+
+        /* -------------------------------------------
+           THEME ENGINE (5 PREMIUM THEMES)
+        -------------------------------------------- */
+        :root {
+            /* 1. QUANTUM VOID (Default) */
+            --bg-main: #03050a;
+            --bg-panel: rgba(10, 15, 26, 0.85);
+            --border-glow: rgba(0, 243, 255, 0.2);
+            --text-primary: #e2e8f0;
+            --accent-main: #00f3ff;
+            --accent-shadow: rgba(0, 243, 255, 0.8);
+            
+            --btn-danger: #ff0055;
+            --btn-danger-shadow: rgba(255, 0, 85, 0.4);
+            
+            --bar-main: linear-gradient(180deg, #00d2ff 0%, #3a7bd5 100%);
+            --bar-main-shadow: rgba(0, 210, 255, 0.3);
+            --bar-compare: linear-gradient(180deg, #ffea00 0%, #ff8800 100%);
+            --bar-swap: linear-gradient(180deg, #ff0055 0%, #990033 100%);
+            --bar-pivot: linear-gradient(180deg, #b000ff 0%, #5d00ff 100%);
+            --bar-sorted: linear-gradient(180deg, #00ff88 0%, #008040 100%);
+        }
+
+        [data-theme="crimson"] {
+            /* 2. CRIMSON FLARE */
+            --bg-main: #0a0101;
+            --bg-panel: rgba(26, 5, 5, 0.85);
+            --border-glow: rgba(255, 42, 42, 0.2);
+            --text-primary: #ffe5e5;
+            --accent-main: #ff2a2a;
+            --accent-shadow: rgba(255, 42, 42, 0.8);
+            
+            --btn-danger: #ffea00;
+            --btn-danger-shadow: rgba(255, 234, 0, 0.4);
+            
+            --bar-main: linear-gradient(180deg, #ff2a2a 0%, #8b0000 100%);
+            --bar-main-shadow: rgba(255, 42, 42, 0.3);
+            --bar-compare: linear-gradient(180deg, #ffea00 0%, #ff8800 100%);
+            --bar-swap: linear-gradient(180deg, #ffffff 0%, #999999 100%);
+            --bar-pivot: linear-gradient(180deg, #b000ff 0%, #5d00ff 100%);
+            --bar-sorted: linear-gradient(180deg, #00ff88 0%, #008040 100%);
+        }
+
+        [data-theme="cyberpunk"] {
+            /* 3. CYBERPUNK NEON */
+            --bg-main: #0d0221;
+            --bg-panel: rgba(20, 5, 40, 0.85);
+            --border-glow: rgba(253, 241, 0, 0.2);
+            --text-primary: #f0e6ff;
+            --accent-main: #fdf100;
+            --accent-shadow: rgba(253, 241, 0, 0.8);
+            
+            --btn-danger: #ff007f;
+            --btn-danger-shadow: rgba(255, 0, 127, 0.4);
+            
+            --bar-main: linear-gradient(180deg, #ff007f 0%, #75003a 100%);
+            --bar-main-shadow: rgba(255, 0, 127, 0.4);
+            --bar-compare: linear-gradient(180deg, #fdf100 0%, #cc9900 100%);
+            --bar-swap: linear-gradient(180deg, #00f3ff 0%, #0055ff 100%);
+            --bar-pivot: linear-gradient(180deg, #00ff41 0%, #006611 100%);
+            --bar-sorted: linear-gradient(180deg, #b000ff 0%, #5d00ff 100%);
+        }
+
+        [data-theme="solar"] {
+            /* 4. SOLAR ECLIPSE (NEW) */
+            --bg-main: #0a0700;
+            --bg-panel: rgba(26, 20, 0, 0.85);
+            --border-glow: rgba(255, 170, 0, 0.2);
+            --text-primary: #fff2cc;
+            --accent-main: #ffaa00;
+            --accent-shadow: rgba(255, 170, 0, 0.8);
+            
+            --btn-danger: #ff3300;
+            --btn-danger-shadow: rgba(255, 51, 0, 0.4);
+            
+            --bar-main: linear-gradient(180deg, #ffaa00 0%, #885500 100%);
+            --bar-main-shadow: rgba(255, 170, 0, 0.3);
+            --bar-compare: linear-gradient(180deg, #ffffff 0%, #cccccc 100%);
+            --bar-swap: linear-gradient(180deg, #ff3300 0%, #880000 100%);
+            --bar-pivot: linear-gradient(180deg, #00f3ff 0%, #005588 100%);
+            --bar-sorted: linear-gradient(180deg, #00ff66 0%, #006622 100%);
+        }
+
+        [data-theme="ocean"] {
+            /* 5. DEEP OCEAN (NEW) */
+            --bg-main: #000a14;
+            --bg-panel: rgba(0, 20, 40, 0.85);
+            --border-glow: rgba(0, 255, 204, 0.2);
+            --text-primary: #ccfff5;
+            --accent-main: #00ffcc;
+            --accent-shadow: rgba(0, 255, 204, 0.8);
+            
+            --btn-danger: #ff0066;
+            --btn-danger-shadow: rgba(255, 0, 102, 0.4);
+            
+            --bar-main: linear-gradient(180deg, #00ffcc 0%, #006666 100%);
+            --bar-main-shadow: rgba(0, 255, 204, 0.3);
+            --bar-compare: linear-gradient(180deg, #ffea00 0%, #887700 100%);
+            --bar-swap: linear-gradient(180deg, #ff0066 0%, #880033 100%);
+            --bar-pivot: linear-gradient(180deg, #b000ff 0%, #550088 100%);
+            --bar-sorted: linear-gradient(180deg, #00f3ff 0%, #0066aa 100%);
+        }
+
+        /* -------------------------------------------
+           GLOBAL & UI STYLES
+        -------------------------------------------- */
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease; }
+        
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-main); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; padding-top: 25px; }
+
+        .dashboard { background: var(--bg-panel); backdrop-filter: blur(25px); border: 1px solid var(--border-glow); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); border-radius: 20px; padding: 25px 40px; width: 95%; max-width: 1400px; display: flex; flex-direction: column; gap: 20px; }
+
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+
+        .brand h1 { font-size: 34px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        .brand h1 span { color: var(--accent-main); text-shadow: 0 0 20px var(--accent-shadow); }
+        .creator { font-size: 14px; color: #94a3b8; font-weight: 500; margin-top: 5px; letter-spacing: 1px; }
+        .creator span { color: var(--accent-main); font-weight: 700; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-glow); }
+
+        /* THEME SELECTOR & DROPDOWNS (Grey Background Fixed) */
+        select {
+            background-color: var(--bg-main) !important; /* Force theme background */
+            color: var(--accent-main);
+            border: 1px solid var(--border-glow);
+            padding: 12px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; outline: none;
+            font-family: inherit; font-size: 14px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            appearance: none; /* Removes default OS styling for a cleaner look */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+        select option {
+            background-color: var(--bg-main); /* Fixes the grey */
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .controls { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; width: 100%; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #94a3b8; font-weight: 600; }
+        .controls-left { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
+        .controls-right { display: flex; gap: 15px; }
+
+        /* BUTTONS (Dynamic Theme Colors Applied) */
+        button { padding: 12px 24px; border-radius: 10px; font-family: inherit; font-weight: 700; cursor: pointer; transition: all 0.3s ease; outline: none; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .btn-generate { 
+            background: rgba(0,0,0,0.4); color: var(--text-primary); 
+            border: 1px solid var(--accent-main); /* Matches Theme */
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .btn-generate:hover:not(:disabled) { 
+            background: var(--accent-main); color: #000; 
+            box-shadow: 0 0 20px var(--accent-shadow); transform: translateY(-2px); 
+        }
+        
+        .btn-stop { 
+            background: transparent; color: var(--btn-danger); 
+            border: 2px solid var(--btn-danger); 
+            box-shadow: 0 0 15px var(--btn-danger-shadow); 
+        }
+        .btn-stop:hover:not(:disabled) { 
+            background: var(--btn-danger); color: #fff; 
+            box-shadow: 0 0 25px var(--btn-danger); transform: translateY(-2px);
+        }
+
+        .btn-start { 
+            background: var(--accent-main); color: #000; border: none;
+            box-shadow: 0 0 20px var(--accent-shadow); 
+        }
+        .btn-start:hover:not(:disabled) { 
+            transform: translateY(-2px); box-shadow: 0 0 35px var(--accent-shadow); filter: brightness(1.2); 
+        }
+        
+        button:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; filter: grayscale(1); }
+
+        input[type="range"] { accent-color: var(--accent-main); cursor: pointer; width: 150px; }
+
+        /* UPGRADED TERMINAL LOG */
+        .console-panel { width: 95%; max-width: 1400px; margin-top: 25px; background: rgba(0,0,0,0.7); border: 1px solid var(--border-glow); border-radius: 12px; padding: 18px 30px; font-family: 'Fira Code', monospace; font-size: 15px; display: flex; align-items: center; gap: 20px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); }
+        .console-badge { background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; color: var(--accent-main); font-weight: bold; font-size: 13px; letter-spacing: 1px; border: 1px solid var(--border-glow); text-transform: uppercase; }
+        
+        .log-container { display: flex; align-items: center; gap: 10px; width: 100%; }
+        .log-prefix { color: var(--accent-main); font-weight: 900; }
+        #logText { font-weight: 600; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
+        
+        /* Blinking Cursor */
+        .cursor { display: inline-block; width: 8px; height: 18px; background-color: var(--accent-main); animation: blink 1s step-end infinite; margin-left: 5px; vertical-align: middle; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* THE GLIDING ARENA */
+        .arena-container { width: 95%; max-width: 1400px; height: 450px; margin-top: 20px; background: rgba(0,0,0,0.8); border-radius: 20px; border: 1px solid var(--border-glow); position: relative; padding: 20px 30px; box-shadow: inset 0 0 80px rgba(0,0,0,0.9); }
+        #visualizer { position: relative; width: 100%; height: 100%; display: flex; align-items: flex-end; }
+        .bar-container { position: absolute; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .bar { width: 100%; background: var(--bar-main); border-radius: 6px 6px 0 0; transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; box-shadow: 0 0 15px var(--bar-main-shadow); }
+        .bar-value { font-family: 'Fira Code', monospace; font-weight: 700; color: #fff; margin-bottom: 6px; transition: font-size 0.2s; }
+
+        /* Dynamic Visual States */
+        .bar.comparing { background: var(--bar-compare); box-shadow: 0 0 25px var(--accent-shadow); transform: scaleY(1.03); z-index: 5; border: 1px solid rgba(255,255,255,0.5); }
+        .bar.swapping { background: var(--bar-swap); box-shadow: 0 0 35px var(--btn-danger-shadow); transform: scaleY(1.05) scaleX(1.1); z-index: 10; border: 1px solid rgba(255,255,255,0.8); }
+        .bar.pivot { background: var(--bar-pivot); box-shadow: 0 0 30px rgba(255,255,255,0.4); border: 1px solid #fff; z-index: 8; }
+        .bar.sorted { background: var(--bar-sorted); box-shadow: 0 0 20px rgba(0,255,100,0.5); }
+
+        /* Bottom Stats Section */
+        .info-section { width: 95%; max-width: 1400px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 25px; margin-bottom: 50px; }
+        .info-card { background: var(--bg-panel); border: 1px solid var(--border-glow); border-radius: 16px; padding: 25px; font-family: 'Fira Code', monospace; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .info-card h3 { color: var(--accent-main); font-family: 'Outfit', sans-serif; margin-bottom: 15px; font-size: 18px; text-transform: uppercase; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stat-box { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-label { color: #94a3b8; font-size: 12px; }
+        .stat-value { color: var(--text-primary); font-size: 28px; font-weight: bold; margin-top: 5px; }
+        .complexity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px; }
+        .comp-item { display: flex; justify-content: space-between; background: rgba(0,0,0,0.6); padding: 12px 15px; border-radius: 8px; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.02); }
+        .comp-val { color: var(--accent-main); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <div class="brand">
+                <h1><span>Quantum</span> Visualizer</h1>
+                <div class="creator">Engineered by <span>Nahid Mahmud</span></div>
+            </div>
+            <div class="theme-wrapper">
+                <select id="themeSelect">
+                    <option value="quantum">🎨 Theme: Quantum Void</option>
+                    <option value="crimson">🎨 Theme: Crimson Flare</option>
+                    <option value="cyberpunk">🎨 Theme: Cyberpunk Neon</option>
+                    <option value="solar">🎨 Theme: Solar Eclipse</option>
+                    <option value="ocean">🎨 Theme: Deep Ocean</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="controls-left">
+                <div class="control-group">
+                    <label>Data Elements: <span id="sizeVal" style="color:var(--accent-main)">25</span></label>
+                    <input type="range" id="sizeSlider" min="10" max="60" value="25">
+                </div>
+                <div class="control-group">
+                    <label>Execution Speed: <span id="speedVal" style="color:var(--accent-main)">50%</span></label>
+                    <input type="range" id="speedSlider" min="1" max="100" value="50">
+                </div>
+                <div class="control-group">
+                    <label>Algorithm Selection</label>
+                    <select id="algoSelect">
+                        <option value="bubble">Bubble Sort</option>
+                        <option value="selection">Selection Sort</option>
+                        <option value="insertion">Insertion Sort</option>
+                        <option value="merge">Merge Sort (In-place)</option>
+                        <option value="quick">Quick Sort</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls-right">
+                <button class="btn-generate" id="generateBtn">Generate New</button>
+                <button class="btn-stop" id="stopBtn" disabled>Emergency Stop</button>
+                <button class="btn-start" id="startBtn">Initiate System</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="console-panel">
+        <span class="console-badge">TERMINAL</span>
+        <div class="log-container">
+            <span class="log-prefix">~/$</span>
+            <span id="logText" style="color: var(--accent-main)">System Initialized. Awaiting command...</span>
+            <span class="cursor"></span>
+        </div>
+    </div>
+
+    <div class="arena-container">
+        <div id="visualizer"></div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-card">
+            <h3>Live Execution Metrics</h3>
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div class="stat-label">TOTAL COMPARISONS</div>
+                    <div class="stat-value" id="compCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">ARRAY SHIFTS / SWAPS</div>
+                    <div class="stat-value" id="swapCount" style="color: var(--btn-danger);">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3 id="algoTitle">Bubble Sort Overview</h3>
+            <div class="complexity-grid">
+                <div class="comp-item"><span>Best Time Complexity</span> <span class="comp-val" id="tBest">O(n)</span></div>
+                <div class="comp-item"><span>Average Time Complexity</span> <span class="comp-val" id="tAvg">O(n²)</span></div>
+                <div class="comp-item"><span>Worst Time Complexity</span> <span class="comp-val" id="tWorst">O(n²)</span></div>
+                <div class="comp-item"><span>Space Memory</span> <span class="comp-val" id="sComp">O(1)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const visualizer = document.getElementById('visualizer');
+        const sizeSlider = document.getElementById('sizeSlider');
+        const speedSlider = document.getElementById('speedSlider');
+        const algoSelect = document.getElementById('algoSelect');
+        const themeSelect = document.getElementById('themeSelect');
+        const generateBtn = document.getElementById('generateBtn');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const logText = document.getElementById('logText');
+        
+        const sizeVal = document.getElementById('sizeVal');
+        const speedVal = document.getElementById('speedVal');
+        const compCountEl = document.getElementById('compCount');
+        const swapCountEl = document.getElementById('swapCount');
+
+        let barsArray = []; 
+        let isSorting = false;
+        let isStopped = false;
+        let compCount = 0;
+        let swapCount = 0;
+        let barStepWidth = 0;
+
+        const algoData = {
+            bubble: { title: "Bubble Sort", best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1)" },
+            selection: { title: "Selection Sort", best: "O(n²)", avg: "O(n²)", worst: "O(n²)", space: "O(1)" },
+            insertion: { title: "Insertion Sort", best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1)" },
+            merge: { title: "Merge Sort", best: "O(n log n)", avg: "O(n log n)", worst: "O(n²)", space: "O(1)" },
+            quick: { title: "Quick Sort", best: "O(n log n)", avg: "O(n log n)", worst: "O(n²)", space: "O(log n)" }
+        };
+
+        // Theme Switcher Logic
+        themeSelect.addEventListener('change', (e) => {
+            document.body.setAttribute('data-theme', e.target.value);
+            // Force log color refresh based on new theme
+            logText.style.color = getComputedStyle(document.body).getPropertyValue('--accent-main');
+        });
+
+        algoSelect.addEventListener('change', () => {
+            const data = algoData[algoSelect.value];
+            document.getElementById('algoTitle').innerText = data.title + " Overview";
+            document.getElementById('tBest').innerText = data.best;
+            document.getElementById('tAvg').innerText = data.avg;
+            document.getElementById('tWorst').innerText = data.worst;
+            document.getElementById('sComp').innerText = data.space;
+        });
+
+        sizeSlider.addEventListener('input', () => { sizeVal.innerText = sizeSlider.value; generateArray(); });
+        speedSlider.addEventListener('input', () => { speedVal.innerText = speedSlider.value + "%"; });
+
+        function updateLog(msg, type = "info") {
+            logText.innerText = msg;
+            const rootStyle = getComputedStyle(document.body);
+            if(type === 'info') logText.style.color = rootStyle.getPropertyValue('--accent-main');
+            if(type === 'swap') logText.style.color = rootStyle.getPropertyValue('--btn-danger');
+            if(type === 'compare') logText.style.color = rootStyle.getPropertyValue('--text-primary');
+            if(type === 'success') logText.style.color = '#00ff66';
+            if(type === 'pivot') logText.style.color = rootStyle.getPropertyValue('--accent-main');
+        }
+
+        function generateArray() {
+            if (isSorting) return;
+            visualizer.innerHTML = '';
+            barsArray = [];
+            compCount = 0; swapCount = 0;
+            compCountEl.innerText = 0; swapCountEl.innerText = 0;
+            updateLog("New dataset compiled. Ready for execution.", "info");
+            
+            let size = parseInt(sizeSlider.value);
+            let containerWidth = visualizer.clientWidth;
+            barStepWidth = containerWidth / size;
+            let actualBarWidth = barStepWidth - 4; 
+            
+            let fontSize = Math.max(9, Math.min(16, barStepWidth / 2.5)); 
+
+            for (let i = 0; i < size; i++) {
+                let value = Math.floor(Math.random() * 90) + 10; 
+                
+                const container = document.createElement('div');
+                container.classList.add('bar-container');
+                container.style.width = `${actualBarWidth}px`;
+                
+                let leftPos = i * barStepWidth;
+                container.style.transform = `translateX(${leftPos}px)`;
+
+                const valText = document.createElement('div');
+                valText.classList.add('bar-value');
+                valText.innerText = value;
+                valText.style.fontSize = `${fontSize}px`; 
+
+                const bar = document.createElement('div');
+                bar.classList.add('bar');
+                bar.style.height = `${value * 3.5}px`;
+
+                container.appendChild(valText);
+                container.appendChild(bar);
+                visualizer.appendChild(container);
+
+                barsArray.push({ value: value, element: container, barDiv: bar, currentPos: leftPos });
+            }
+        }
+
+        const sleep = () => {
+            let speedVal = parseInt(speedSlider.value);
+            let delay = Math.max(5, 505 - (speedVal * 5)); 
+            return new Promise(resolve => setTimeout(resolve, delay));
+        };
+
+        async function swapBarsVisual(idx1, idx2) {
+            if (isStopped) return;
+            barsArray[idx1].barDiv.classList.add('swapping');
+            barsArray[idx2].barDiv.classList.add('swapping');
+            
+            swapCount++; swapCountEl.innerText = swapCount;
+            updateLog(`Executing Swap: [${barsArray[idx1].value}] ⇄ [${barsArray[idx2].value}]`, "swap");
+            
+            let tempPos = barsArray[idx1].currentPos;
+            barsArray[idx1].currentPos = barsArray[idx2].currentPos;
+            barsArray[idx2].currentPos = tempPos;
+
+            barsArray[idx1].element.style.transform = `translateX(${barsArray[idx1].currentPos}px)`;
+            barsArray[idx2].element.style.transform = `translateX(${barsArray[idx2].currentPos}px)`;
+
+            await sleep();
+
+            let tempObj = barsArray[idx1];
+            barsArray[idx1] = barsArray[idx2];
+            barsArray[idx2] = tempObj;
+
+            barsArray[idx1].barDiv.classList.remove('swapping');
+            barsArray[idx2].barDiv.classList.remove('swapping');
+        }
+
+        async function shiftAndInsert(targetIdx, sourceIdx) {
+            if (isStopped) return;
+            let sourceItem = barsArray[sourceIdx];
+            sourceItem.barDiv.classList.add('swapping');
+            updateLog(`Shifting Element [${sourceItem.value}] to Index ${targetIdx}`, "swap");
+            swapCount++; swapCountEl.innerText = swapCount;
+
+            for(let k = sourceIdx; k > targetIdx; k--) {
+                barsArray[k] = barsArray[k-1];
+                barsArray[k].currentPos = k * barStepWidth;
+                barsArray[k].element.style.transform = `translateX(${barsArray[k].currentPos}px)`;
+            }
+            barsArray[targetIdx] = sourceItem;
+            barsArray[targetIdx].currentPos = targetIdx * barStepWidth;
+            barsArray[targetIdx].element.style.transform = `translateX(${barsArray[targetIdx].currentPos}px)`;
+            
+            await sleep();
+            sourceItem.barDiv.classList.remove('swapping');
+        }
+
+        /* --- ALGORITHMS --- */
+
+        async function bubbleSort() {
+            let n = barsArray.length;
+            for (let i = 0; i < n - 1; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    if(isStopped) return;
+                    barsArray[j].barDiv.classList.add('comparing');
+                    barsArray[j+1].barDiv.classList.add('comparing');
+                    
+                    compCount++; compCountEl.innerText = compCount;
+                    updateLog(`Analyzing: Is ${barsArray[j].value} > ${barsArray[j+1].value}?`, "compare");
+                    await sleep();
+
+                    if (barsArray[j].value > barsArray[j+1].value) await swapBarsVisual(j, j+1);
+                    
+                    barsArray[j].barDiv.classList.remove('comparing');
+                    barsArray[j+1].barDiv.classList.remove('comparing');
+                }
+                barsArray[n - 1 - i].barDiv.classList.add('sorted');
+            }
+            barsArray[0].barDiv.classList.add('sorted');
+        }
+
+        async function selectionSort() {
+            let n = barsArray.length;
+            for (let i = 0; i < n; i++) {
+                if(isStopped) return;
+                let minIdx = i;
+                barsArray[minIdx].barDiv.classList.add('pivot');
+                updateLog(`Targeting Minimum: [${barsArray[minIdx].value}]`, "pivot");
+                
+                for (let j = i + 1; j < n; j++) {
+                    if(isStopped) return;
+                    barsArray[j].barDiv.classList.add('comparing');
+                    compCount++; compCountEl.innerText = compCount;
+                    await sleep();
+                    
+                    if (barsArray[j].value < barsArray[minIdx].value) {
+                        updateLog(`New Minimum Detected: [${barsArray[j].value}]`, "compare");
+                        barsArray[minIdx].barDiv.classList.remove('pivot');
+                        minIdx = j;
+                        barsArray[minIdx].barDiv.classList.add('pivot');
+                    } else {
+                        barsArray[j].barDiv.classList.remove('comparing');
+                    }
+                }
+                if (minIdx !== i) await swapBarsVisual(i, minIdx);
+                barsArray[minIdx].barDiv.classList.remove('pivot');
+                barsArray[i].barDiv.classList.add('sorted');
+            }
+        }
+
+        async function insertionSort() {
+            let n = barsArray.length;
+            barsArray[0].barDiv.classList.add('sorted');
+            for (let i = 1; i < n; i++) {
+                let j = i;
+                while (j > 0) {
+                    if(isStopped) return;
+                    barsArray[j].barDiv.classList.add('comparing');
+                    barsArray[j-1].barDiv.classList.add('comparing');
+                    compCount++; compCountEl.innerText = compCount;
+                    updateLog(`Comparing [${barsArray[j].value}] against sorted block [${barsArray[j-1].value}]`, "compare");
+                    await sleep();
+
+                    if (barsArray[j].value < barsArray[j-1].value) {
+                        await swapBarsVisual(j, j-1);
+                        barsArray[j].barDiv.classList.remove('comparing');
+                        barsArray[j].barDiv.classList.add('sorted');
+                        barsArray[j-1].barDiv.classList.remove('comparing');
+                        j--;
+                    } else {
+                        barsArray[j].barDiv.classList.remove('comparing');
+                        barsArray[j-1].barDiv.classList.remove('comparing');
+                        barsArray[j].barDiv.classList.add('sorted');
+                        break;
+                    }
+                }
+            }
+        }
+
+        async function mergeSort(l, r) {
+            if (l >= r || isStopped) return;
+            let m = l + Math.floor((r - l) / 2);
+            await mergeSort(l, m);
+            await mergeSort(m + 1, r);
+            await merge(l, m, r);
+        }
+
+        async function merge(start, mid, end) {
+            let start2 = mid + 1;
+            if (barsArray[mid].value <= barsArray[start2].value) return;
+
+            while (start <= mid && start2 <= end) {
+                if(isStopped) return;
+                barsArray[start].barDiv.classList.add('comparing');
+                barsArray[start2].barDiv.classList.add('comparing');
+                compCount++; compCountEl.innerText = compCount;
+                updateLog(`Merging Blocks: [${barsArray[start].value}] & [${barsArray[start2].value}]`, "compare");
+                await sleep();
+
+                if (barsArray[start].value <= barsArray[start2].value) {
+                    barsArray[start].barDiv.classList.remove('comparing');
+                    barsArray[start2].barDiv.classList.remove('comparing');
+                    start++;
+                } else {
+                    barsArray[start].barDiv.classList.remove('comparing');
+                    barsArray[start2].barDiv.classList.remove('comparing');
+                    await shiftAndInsert(start, start2);
+                    start++; mid++; start2++;
+                }
+            }
+        }
+
+        async function quickSort(low, high) {
+            if (low < high && !isStopped) {
+                let pi = await partition(low, high);
+                if(!isStopped) barsArray[pi].barDiv.classList.add('sorted');
+                await quickSort(low, pi - 1);
+                await quickSort(pi + 1, high);
+            } else if(low === high && !isStopped) {
+                barsArray[low].barDiv.classList.add('sorted');
+            }
+        }
+
+        async function partition(low, high) {
+            let pivotVal = barsArray[high].value;
+            barsArray[high].barDiv.classList.add('pivot');
+            updateLog(`Pivot Locked: [${pivotVal}]`, "pivot");
+            
+            let i = low - 1;
+            for (let j = low; j < high; j++) {
+                if(isStopped) return;
+                barsArray[j].barDiv.classList.add('comparing');
+                compCount++; compCountEl.innerText = compCount;
+                await sleep();
+                
+                if (barsArray[j].value < pivotVal) {
+                    updateLog(`Condition Met: [${barsArray[j].value}] < Pivot, shifting to Left-Zone`, "compare");
+                    i++;
+                    await swapBarsVisual(i, j);
+                }
+                barsArray[j].barDiv.classList.remove('comparing');
+            }
+            if(!isStopped) {
+                await swapBarsVisual(i + 1, high);
+                barsArray[i + 1].barDiv.classList.remove('pivot');
+            }
+            return i + 1;
+        }
+
+        // --- EXECUTOR CONTROLS ---
+        startBtn.addEventListener('click', async () => {
+            if (isSorting) return;
+            isSorting = true;
+            isStopped = false;
+            
+            generateBtn.disabled = true; algoSelect.disabled = true; themeSelect.disabled = true; startBtn.disabled = true; stopBtn.disabled = false;
+            barsArray.forEach(b => b.barDiv.className = 'bar'); 
+
+            const algo = algoSelect.value;
+            try {
+                if (algo === 'bubble') await bubbleSort();
+                if (algo === 'selection') await selectionSort();
+                if (algo === 'insertion') await insertionSort();
+                if (algo === 'merge') { await mergeSort(0, barsArray.length - 1); if(!isStopped) barsArray.forEach(b => b.barDiv.classList.add('sorted')); }
+                if (algo === 'quick') { await quickSort(0, barsArray.length - 1); if(!isStopped) barsArray.forEach(b => b.barDiv.classList.add('sorted')); }
+                
+                if (!isStopped) updateLog("PROCESS COMPLETE. Dataset successfully ordered.", "success");
+            } catch (e) { console.error(e); }
+            
+            isSorting = false;
+            generateBtn.disabled = false; algoSelect.disabled = false; themeSelect.disabled = false; startBtn.disabled = false; stopBtn.disabled = true;
+        });
+
+        stopBtn.addEventListener('click', () => {
+            isStopped = true;
+            updateLog("EMERGENCY OVERRIDE ACTIVATED. Algorithm Terminated.", "swap");
+            setTimeout(() => {
+                isSorting = false;
+                generateBtn.disabled = false; algoSelect.disabled = false; themeSelect.disabled = false; startBtn.disabled = false; stopBtn.disabled = true;
+                generateArray(); 
+            }, 800);
+        });
+
+        window.onload = generateArray;
+        generateBtn.addEventListener('click', generateArray);
+        window.addEventListener('resize', generateArray); 
+    </script>
+</body>
+</html>
